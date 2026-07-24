@@ -51,6 +51,13 @@ jobs:
           mkdir -p dist
           tar -czf dist/app.tar.gz app.js package.json
 
+      # Install Python for artifact registration
+      - name: Install Python
+        uses: docker://node:18
+        shell: sh
+        run: |
+          apt-get update && apt-get install -y python3 python3-pip
+
       - name: Register build artifact
         id: register-artifact
         uses: cloudbees-io/register-build-artifact@v1
@@ -74,3 +81,4 @@ jobs:
         with:
           artifact-id: ${{ steps.register-artifact.outputs.artifact-id }}
           target-environment: staging
+
