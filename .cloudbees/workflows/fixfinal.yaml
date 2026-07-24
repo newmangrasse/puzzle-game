@@ -72,5 +72,5 @@ jobs:
       - name: Register deployment
         uses: cloudbees-io/register-deployed-artifact@v2
         with:
-          artifact-id: ${{ steps.step6.outputs.artifact-id }}
+          artifact-id: ${{ steps.register-artifact.outputs.artifact-id }}
           target-environment: staging
