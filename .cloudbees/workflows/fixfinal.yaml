@@ -38,7 +38,6 @@ jobs:
         run: |
           npm test -- --reporters=default --reporters=jest-junit
 
-      # Publish test results to CloudBees
       - name: Publish test results
         uses: cloudbees-io/publish-test-results@v2
         with:
@@ -52,15 +51,14 @@ jobs:
           mkdir -p dist
           tar -czf dist/app.tar.gz app.js package.json
 
-      # Register build artifact with CloudBees
       - name: Register build artifact
+        id: register-artifact
         uses: cloudbees-io/register-build-artifact@v1
         with:
           name: puzzle-game-artifact
           version: ${{ cloudbees.scm.sha }}
           url: file://dist/app.tar.gz
 
-      # Deploy to staging
       - name: Deploy to staging
         uses: docker://node:18
         shell: sh
@@ -71,9 +69,8 @@ jobs:
           echo "Deployment URL: https://staging.example.com"
           echo "Deployment completed successfully"
 
-      # Register deployment - FIXED: target-environment instead of environment
       - name: Register deployment
         uses: cloudbees-io/register-deployed-artifact@v2
         with:
-          artifact-id: ${{ steps.register-build-artifact.outputs.artifact-id }}
+          artifact-id: ${{ steps.step6.outputs.artifact-id }}
           target-environment: staging
