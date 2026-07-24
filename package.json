@@ -1,0 +1,18 @@
+{
+  "name": "puzzle-game",
+  "version": "1.0.0",
+  "description": "Sample app with tests and artifacts",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest --reporters=default --reporters=jest-junit",
+    "build": "tar -czf dist/app.tar.gz app.js package.json"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "jest-junit": "^16.0.0"
+  },
+  "jest-junit": {
+    "outputDirectory": "test-results",
+    "outputName": "junit.xml"
+  }
+}
