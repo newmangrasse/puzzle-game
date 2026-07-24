@@ -51,20 +51,14 @@ jobs:
           mkdir -p dist
           tar -czf dist/app.tar.gz app.js package.json
 
-      # Install Python for artifact registration
-      - name: Install Python
-        uses: docker://node:18
-        shell: sh
-        run: |
-          apt-get update && apt-get install -y python3 python3-pip
-
+      # FIXED: Use @v2 instead of @v1
       - name: Register build artifact
         id: register-artifact
-        uses: cloudbees-io/register-build-artifact@v1
+        uses: cloudbees-io/register-build-artifact@v2
         with:
           name: puzzle-game-artifact
           version: ${{ cloudbees.scm.sha }}
-          url: file://dist/app.tar.gz
+          url: https://github.com/${{ cloudbees.scm.repositoryUrl }}/releases/download/${{ cloudbees.scm.sha }}/app.tar.gz
 
       - name: Deploy to staging
         uses: docker://node:18
@@ -81,4 +75,3 @@ jobs:
         with:
           artifact-id: ${{ steps.register-artifact.outputs.artifact-id }}
           target-environment: staging
-
