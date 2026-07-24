@@ -1,0 +1,30 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: My workflownewEditededitedx
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  build:
+    environment: aa
+    steps:
+      - name: Say hello and wassup anyways
+        run: |
+          echo "hello world"
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+  newJobaganaia-editedX:
+    environment: aa
+    steps:
+      - name: aa
+        uses: yes
+    needs: approavelJobnewandlatest
+  approavelJobnewandlatest:
+    with:
+      instructions: hello and wassup guys and ladies
+      disallowLaunchByUser: false
+      approvers: a6dd1c38-851d-11f1-813f-42010a83aedd
+      notifyAllEligibleUsers: false
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
