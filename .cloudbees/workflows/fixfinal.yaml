@@ -1,0 +1,78 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+
+name: Complete Workflow with Tests, Artifacts, and Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-deploy:
+    steps:
+      - name: Checkout code
+        uses: cloudbees-io/checkout@v1
+
+      - name: Set up Node.js
+        uses: docker://node:18
+        shell: sh
+        run: |
+          node --version
+          npm --version
+
+      - name: Install dependencies
+        uses: docker://node:18
+        shell: sh
+        run: |
+          npm install
+
+      - name: Run tests
+        uses: docker://node:18
+        shell: sh
+        run: |
+          npm test -- --reporters=default --reporters=jest-junit
+
+      # ✅ FIX 1: Publish test results to CloudBees
+      - name: Publish test results
+        uses: cloudbees-io/publish-test-results@v2
+        with:
+          test-type: junit
+          results-path: junit.xml
+
+      - name: Build application
+        uses: docker://node:18
+        shell: sh
+        run: |
+          mkdir -p dist
+          tar -czf dist/app.tar.gz app.js package.json
+
+      # ✅ FIX 2: Register build artifact with CloudBees
+      - name: Register build artifact
+        uses: cloudbees-io/register-build-artifact@v1
+        with:
+          name: puzzle-game-artifact
+          version: ${{ cloudbees.scm.sha }}
+          url: file://dist/app.tar.gz
+
+      # ✅ FIX 3: Register deployment with CloudBees
+      - name: Deploy to staging
+        uses: docker://node:18
+        shell: sh
+        env:
+          DEPLOY_ENV: staging
+        run: |
+          echo "Deploying application to staging environment..."
+          echo "Deployment URL: https://staging.example.com"
+          echo "Deployment completed successfully"
+
+      - name: Register deployment
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ steps.register-build-artifact.outputs.artifact-id }}
+          environment: staging
