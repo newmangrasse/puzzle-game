@@ -1,0 +1,54 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: My workflow
+on:
+  push:
+    branches:
+      - newmangrasse-patch-1
+    tags:
+      - anything
+  pull_request:
+    branches:
+      - newmangrasse-patch-1
+  workflow_dispatch:
+metadata:
+  stages/v1alpha1:
+    - name: Stage 1editedX
+      jobs:
+        - job1
+        - againNewJob
+    - name: Stage
+      jobs:
+        - job
+        - againNewOneStandardJobanywyas
+jobs:
+  job1:
+    steps:
+      - run: echo "hello world"
+        uses: docker://golang:1.20.3-alpine3.17
+        name: Hello world
+        shell: sh
+  againNewJob:
+    needs: job1
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
+    with:
+      instructions: do it anyways
+      disallowLaunchByUser: false
+      notifyAllEligibleUsers: false
+      approvers: a6dd1c38-851d-11f1-813f-42010a83aedd
+  job:
+    needs: againNewJob
+    steps:
+      - name: Say hello
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: echo "hello world"
+  againNewOneStandardJobanywyas:
+    needs: job
+    environment: env
+    steps:
+      - with:
+          a: aa
+        uses: yes
+        name: hello and wassup guys and ladies
