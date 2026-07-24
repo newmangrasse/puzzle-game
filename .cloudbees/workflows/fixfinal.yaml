@@ -51,7 +51,6 @@ jobs:
           mkdir -p dist
           tar -czf dist/app.tar.gz app.js package.json
 
-      # FIXED: Use @v2 instead of @v1
       - name: Register build artifact
         id: register-artifact
         uses: cloudbees-io/register-build-artifact@v2
@@ -60,18 +59,18 @@ jobs:
           version: ${{ cloudbees.scm.sha }}
           url: https://github.com/${{ cloudbees.scm.repositoryUrl }}/releases/download/${{ cloudbees.scm.sha }}/app.tar.gz
 
-      - name: Deploy to staging
+      - name: Deploy to production
         uses: docker://node:18
         shell: sh
         env:
-          DEPLOY_ENV: staging
+          DEPLOY_ENV: production
         run: |
-          echo "Deploying application to staging environment..."
-          echo "Deployment URL: https://staging.example.com"
+          echo "Deploying application to production environment..."
+          echo "Deployment URL: https://production.example.com"
           echo "Deployment completed successfully"
 
       - name: Register deployment
         uses: cloudbees-io/register-deployed-artifact@v2
         with:
           artifact-id: ${{ steps.register-artifact.outputs.artifact-id }}
-          target-environment: staging
+          target-environment: namastey
