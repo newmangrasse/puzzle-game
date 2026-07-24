@@ -1,0 +1,73 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: finalOneWorkflowall
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  build:
+    steps:
+      - name: Checkout code
+        uses: cloudbees-io/checkout@v1
+      - name: Say hello
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "hello world"
+      - name: Build application
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          # Example build commands
+          echo "Building application..."
+          mkdir -p dist
+          echo "Sample build artifact" > dist/app.txt
+          tar -czf dist/app.tar.gz dist/app.txt
+      - name: Run tests
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          # Example test commands that generate JUnit XML
+          echo "Running tests..."
+          mkdir -p test-results
+          cat > test-results/results.xml << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <testsuites>
+            <testsuite name="Example Test Suite" tests="3" failures="0" errors="0" skipped="0">
+              <testcase name="test_example_1" classname="ExampleTests" time="0.123"/>
+              <testcase name="test_example_2" classname="ExampleTests" time="0.456"/>
+              <testcase name="test_example_3" classname="ExampleTests" time="0.789"/>
+            </testsuite>
+          </testsuites>
+          EOF
+      - name: Publish test results
+        uses: cloudbees-io/publish-test-results@v1
+        with:
+          test-results-pattern: test-results/*.xml
+          test-type: junit
+      - name: Publish build artifacts
+        uses: cloudbees-io/publish-artifacts@v1
+        with:
+          artifacts: |
+            dist/app.tar.gz
+      - name: Deploy to staging
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        env:
+          ENVIRONMENT: staging
+        run: |
+          echo "Deploying to staging environment..."
+          echo "Deployment completed successfully"
+      - name: Record deployment
+        uses: cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |
+            {
+              "environment": "staging",
+              "status": "success",
+              "deployment_url": "https://staging.myapp.com",
+              "deployed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            }
+env:
+  hello: hi
