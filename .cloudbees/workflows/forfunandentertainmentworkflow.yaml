@@ -1,0 +1,37 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: forFunandEntertainmentWorkflow
+on:
+  push:
+    branches:
+      - "**"
+      - newmangrasse-patch-1
+      - main
+  schedule:
+    - cron: 0 * * * *
+jobs:
+  build:
+    steps:
+      - name: Say hello
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "hello world"
+  newJobAnyways:
+    environment: namastey
+    steps:
+      - name: aa
+        with:
+          a: aa
+        uses: aa
+    needs: build
+  newApprovalAnyways:
+    with:
+      instructions: hello and wassup
+      disallowLaunchByUser: false
+      approvers: a6dd1c38-851d-11f1-813f-42010a83aedd
+      notifyAllEligibleUsers: false
+    timeout-minutes: 10
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
+env:
+  namastey: guysandladies
