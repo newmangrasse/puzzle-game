@@ -1,0 +1,10 @@
+- name: Simulated Security Scan
+  uses: docker://alpine:latest
+  shell: sh
+  run: |
+    echo "=== SCA Scan Results ==="
+    echo "CRITICAL: lodash@4.17.15 - CVE-2019-10744 (Prototype Pollution)"
+    echo "HIGH: express@4.16.0 - CVE-2022-24999 (qs vulnerability)"
+    echo "=== Secrets Detection ==="
+    echo "Found hardcoded secret in app.js: AWS_SECRET_ACCESS_KEY=AKIA..."
+    echo "Found hardcoded password in config.json: DB_PASSWORD=supersecret"
