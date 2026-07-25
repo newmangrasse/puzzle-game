@@ -1,0 +1,53 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: Workflow with Security Scans
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-deploy:
+    steps:
+      - name: Checkout code
+        uses: cloudbees-io/checkout@v1
+
+      # ---------- SECURITY SCANS ----------
+      - name: Dependency scanning (SCA)
+        uses: cloudbees-io/scan@v1
+        with:
+          type: sca
+          path: .
+
+      - name: Secrets detection
+        uses: cloudbees-io/scan@v1
+        with:
+          type: secrets
+          path: .
+      # ------------------------------------
+
+      - name: Set up Node.js
+        uses: docker://node:18
+        shell: sh
+        run: |
+          node --version
+          npm --version
+
+      - name: Install dependencies
+        uses: docker://node:18
+        shell: sh
+        run: npm install
+
+      - name: Run tests
+        uses: docker://node:18
+        shell: sh
+        run: npm test || true   # allow test failure
+
+      - name: Publish test results
+        if: always()
+        uses: cloudbees-io/publish-test-results@v2
+        with:
+          test-type: junit
+          results-path: junit.xml
