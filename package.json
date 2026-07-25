@@ -10,5 +10,12 @@
   "devDependencies": {
     "jest": "^29.0.0",
     "jest-junit": "^16.0.0"
+  },
+  "dependencies": {
+    "express": "4.16.0",
+    "lodash": "4.17.11",
+    "axios": "0.18.0",
+    "moment": "2.19.3",
+    "jquery": "2.1.4"
   }
 }
