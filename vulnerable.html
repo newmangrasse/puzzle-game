@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vulnerable XSS Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 2rem;
+      color: #333;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 { color: #d32f2f; }
+    .search-box {
+      margin: 1rem 0;
+    }
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #d32f2f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #fff3f3;
+      border-left: 4px solid #d32f2f;
+    }
+    #dom-message {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f3f9ff;
+      border-left: 4px solid #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Vulnerable Search Page</h1>
+    <p>This page contains two intentional XSS vulnerabilities for educational purposes.</p>
+
+    <!-- ===== REFLECTED XSS (Basic) ===== -->
+    <div class="search-box">
+      <h2>Search (Reflected XSS)</h2>
+      <form method="GET" action="">
+        <input type="text" name="q" placeholder="Search term..." value="">
+        <button type="submit">Search</button>
+      </form>
+      <div class="result" id="search-result">
+        <!-- User input from the 'q' parameter is reflected here WITHOUT sanitisation -->
+        <script>
+          // Reflected XSS: directly writes the 'q' URL parameter into the page
+          const params = new URLSearchParams(location.search);
+          const query = params.get('q') || '';
+          if (query) {
+            document.write('You searched for: <strong>' + query + '</strong>');
+          }
+        </script>
+      </div>
+    </div>
+
+    <!-- ===== DOM-BASED XSS ===== -->
+    <div id="dom-message">
+      <h2>Custom Message (DOM XSS)</h2>
+      <p>Load a custom message using the URL hash fragment (e.g., #hello)</p>
+      <div id="user-message"></div>
+      <script>
+        // DOM-based XSS: takes the URL hash fragment and inserts it as HTML
+        // Example: http://vuln-site.com/#<img src=x onerror=alert(1)>
+        const hash = location.hash.slice(1); // remove the '#'
+        if (hash) {
+          document.getElementById('user-message').innerHTML =
+            '<em>Custom message:</em> ' + decodeURIComponent(hash);
+        }
+      </script>
+    </div>
+  </div>
+</body>
+</html>
