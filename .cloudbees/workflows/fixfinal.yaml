@@ -36,7 +36,7 @@ jobs:
         uses: docker://node:18
         shell: sh
         run: |
-          npm test -- --reporters=default --reporters=jest-junit
+          npm test
 
       - name: Publish test results
         uses: cloudbees-io/publish-test-results@v2
