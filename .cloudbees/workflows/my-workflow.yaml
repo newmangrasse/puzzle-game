@@ -8,7 +8,7 @@ metadata:
     - name: Stage 1
       jobs:
         - job1
-        - againNewJob
+        - againNewJobedited
 jobs:
   job1:
     steps:
@@ -16,7 +16,7 @@ jobs:
         uses: docker://golang:1.20.3-alpine3.17
         name: Hello world
         shell: sh
-  againNewJob:
+  againNewJobedited:
     needs:
       - job1
     timeout-minutes: 4320
