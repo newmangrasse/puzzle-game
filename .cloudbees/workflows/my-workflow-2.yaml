@@ -1,0 +1,23 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: My workflow
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  build:
+    steps:
+      - name: Say hello
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "hello world"
+  aaaa:
+    with:
+      instructions: ""
+      disallowLaunchByUser: false
+      approvers: a6dd1c38-851d-11f1-813f-42010a83aedd
+      notifyAllEligibleUsers: false
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
