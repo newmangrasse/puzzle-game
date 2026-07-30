@@ -21,3 +21,11 @@ jobs:
       notifyAllEligibleUsers: false
     timeout-minutes: 4320
     delegates: cloudbees-io/manual-approval/custom-job.yml@v1
+  bbb:
+    with:
+      instructions: ""
+      disallowLaunchByUser: false
+      approvers: a9728006-88dc-11f1-af79-42010a83aedd
+      notifyAllEligibleUsers: false
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
